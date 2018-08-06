@@ -1,5 +1,6 @@
 package com.kydw.criminalintent;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -18,6 +19,7 @@ import java.util.UUID;
  * @date 2018/7/17 11:10
  */
 public class CrimeLab {
+    @SuppressLint("StaticFieldLeak")
     private static CrimeLab sCrimeLab;
 
     private Context mContext;
@@ -37,14 +39,27 @@ public class CrimeLab {
 
     public List<Crime> getCrimes() {
         List<Crime> crimes = new ArrayList<>();
-        CrimeCursorWrapper cursor = queryCrimes(null, null);
 
-        return new ArrayList<>();
+        try (CrimeCursorWrapper cursor = queryCrimes(null, null)) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                crimes.add(cursor.getCrime());
+                cursor.moveToNext();
+            }
+        }
+        return crimes;
     }
 
     public Crime getCrime(UUID id) {
 
-        return null;
+        try (CrimeCursorWrapper cursor = queryCrimes(CrimeTable.Cols.UUID + " = ?",
+                new String[]{id.toString()})) {
+            if (cursor.getCount() == 0) {
+                return null;
+            }
+            cursor.moveToFirst();
+            return cursor.getCrime();
+        }
     }
 
     private static ContentValues getContentValue(Crime crime) {
@@ -53,6 +68,7 @@ public class CrimeLab {
         values.put(CrimeTable.Cols.TITLE, crime.getTitle());
         values.put(CrimeTable.Cols.DATE, crime.getDate().getTime());
         values.put(CrimeTable.Cols.SOLVED, crime.isSolved());
+        values.put(CrimeTable.Cols.SUSPECT, crime.getSuspect());
 
         return values;
     }
