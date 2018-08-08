@@ -10,6 +10,7 @@ import com.kydw.criminalintent.database.CrimeBaseHelper;
 import com.kydw.criminalintent.database.CrimeCursorWrapper;
 import com.kydw.criminalintent.database.CrimeDbSchema.CrimeTable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -76,6 +77,11 @@ public class CrimeLab {
     public void addCrime(Crime c) {
         ContentValues values = getContentValue(c);
         mDatabase.insert(CrimeTable.NAME, null, values);
+    }
+
+    public File getPhotoFile(Crime crime) {
+        File fileDir = mContext.getFilesDir();
+        return new File(fileDir, crime.getPhotoFilename());
     }
 
     public void updateCrime(Crime crime) {
