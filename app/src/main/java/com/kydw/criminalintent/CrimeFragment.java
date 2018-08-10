@@ -139,10 +139,6 @@ public class CrimeFragment extends Fragment {
         mReportButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent shareIntent = ShareCompat.IntentBuilder.from(getActivity())
-//                        .setType("text/plain")
-//                        .setText(getCrimeReport())
-//                        .getIntent();
 
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("text/plain");
